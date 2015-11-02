@@ -16,8 +16,12 @@ new scratchLottery(ElementID, {
     },
     //scratchType : 'point',
     openPct : 40,
-    onscratch : drawPercent,
-    onopen : openLottery
+    onscratch : function (percent) {
+        console.log('已刮开：': percent+'%');
+    },
+    onopen : function (percent) {
+        console.log('刮开了 ': percent+'%，移除遮罩');
+    }
 });
 ```
 
