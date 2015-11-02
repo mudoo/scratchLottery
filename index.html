@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>scratchLottery demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<style type='text/css'>
+		body {
+			height:1000px;
+		}
+
+		#lotteryArea {
+			position:relative;
+			width:300px;
+			height:156px;
+		}
+		#lotteryArea canvas {width:100%; height:100%;}
+
+		#drawPercent {
+			color:#F60;
+		}
+	</style>
+
+</head>
+<body>
+<div><button id="freshBtn">刷新</button> <button id="resizeBtn">切换尺寸</button> <label>已刮开 <span id="drawPercent">0%</span> 区域。</label></div>
+<div id="lotteryArea"></div>
+
+<script type='text/javascript' src="js/scratchLottery.source.js"></script>
+<script>
+	var lottery,
+		area = document.getElementById('lotteryArea'),
+		pctNode = document.getElementById('drawPercent');
+
+	window.onload = function() {
+		lottery = new scratchLottery('lotteryArea', {
+			//lottery : 'http://www.baidu.com/img/bdlogo.gif',
+    		lottery : '一等奖\niPhone6 一部\n恭喜您获奖',
+			//lottery : 'First prize\nCongratulations!',
+			mask : 'images/mask.png',
+			text : {
+				//font : 'Arial',
+				margin: [.2,.2]
+			},
+			//scratchType : 'point',
+			openPct : 40,
+			onscratch : drawPercent,
+			onopen : openLottery
+		});
+
+		// 刷新
+		document.getElementById('freshBtn').onclick = function() {
+			var txt = randomStr(10);
+			console.info('fresh: '+ txt);
+			pctNode.innerHTML = '0%';
+			lottery.init(txt, 'text');
+		};
+
+		// 切换尺寸
+		document.getElementById('resizeBtn').onclick = function() {
+			var width = area.offsetWidth,
+				size = [300, 156];
+			if(width==300) {
+				size = [500, 260];
+				area.style.width = size[0]+'px';
+				area.style.height = size[1]+'px';
+			}else{
+				area.style.cssText = '';
+			}
+
+			lottery.resize(size[0], size[1]);
+		};
+	};
+
+
+
+	function drawPercent(percent) {
+		pctNode.innerHTML = percent+'%';
+	}
+
+	function openLottery(percent) {
+		alert('恭喜呀~~~~'+ percent);
+	}
+
+	function randomStr(len) {
+		var text = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		for(var i = 0; i<len; i++)
+			text += possible.charAt(Math.floor(Math.random()*possible.length));
+		return text;
+	}
+
+	function parseObject (obj, t){
+		if(typeof(obj)!='object') return '';
+		t = t ? t : 1;
+
+		var result = '', tab = new Array(t).join('\t');
+		for(var i in obj) {
+			if(obj[i] && typeof obj[i]=='object' && !obj[i].length) {
+				result += tab + i +':{\n'+ parseObject(obj[i], t+1) +'}\n';
+			}else {
+				result += tab + i +':'+ obj[i] +'\n';
+			}
+		}
+
+		return result;
+	}
+</script>
+</body>
+</html>
+
